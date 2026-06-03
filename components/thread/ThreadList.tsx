@@ -92,7 +92,7 @@ const ThreadList = ({ courseId, showHeader = true, onSelectThread }: ThreadListP
                 key={thread.id}
                 thread={thread}
                 courseId={courseId}
-                onClick={onSelectThread ? () => onSelectThread(thread.id) : undefined} // [R2-2]
+                onClick={onSelectThread ? () => onSelectThread(thread.id) : undefined}
               />
             ))}
             {visibleCount < (threadsData?.total ?? 0) && (

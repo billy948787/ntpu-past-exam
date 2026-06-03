@@ -47,8 +47,6 @@ function ExamListContent({
   departmentData,
   deptError,
   isDeptLoading,
-  departmentId,
-  courseId,
   setParams: setQueryParams,
   selectedPostId,
   onSelectPost,
@@ -57,8 +55,6 @@ function ExamListContent({
   departmentData?: DepartmentResponse;
   deptError?: Error;
   isDeptLoading: boolean;
-  departmentId: string;
-  courseId: string;
   setParams: (params: Record<string, string>) => void;
   selectedPostId?: string | null;
   onSelectPost?: (id: string) => void;
@@ -79,7 +75,7 @@ function ExamListContent({
             )}
           >
             <span>{post.title}</span>
-            <span className="text-[11px] text-muted-foreground/20 group-hover:text-primary font-mono transition-colors shrink-0 ml-4">&rarr;</span>
+            <span className="text-[11px] text-muted-foreground/20 group-hover:text-primary font-mono shrink-0 ml-4 group-hover:translate-x-1 transition-[color,transform] duration-200">&rarr;</span>
           </button>
         ))}
       </div>
@@ -116,8 +112,6 @@ function ExamPanelContent({
   departmentData,
   deptError,
   isDeptLoading,
-  departmentId,
-  courseId,
   setParams,
 }: {
   selectedPostId: string | null;
@@ -127,8 +121,6 @@ function ExamPanelContent({
   departmentData?: DepartmentResponse;
   deptError?: Error;
   isDeptLoading: boolean;
-  departmentId: string;
-  courseId: string;
   setParams: (params: Record<string, string>) => void;
 }) {
   if (selectedPostId) {
@@ -140,8 +132,6 @@ function ExamPanelContent({
       departmentData={departmentData}
       deptError={deptError}
       isDeptLoading={isDeptLoading}
-      departmentId={departmentId}
-      courseId={courseId}
       setParams={setParams}
       selectedPostId={selectedPostId}
       onSelectPost={onSelectPost}
@@ -223,14 +213,16 @@ const CoursePage = () => {
   const selectedPostId = get("post");
   const examScrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = examScrollRef.current;
+  useEffect(() => {    const el = examScrollRef.current;
     if (!el) return;
-    const viewport = el.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
-    if (viewport) {
-      viewport.scrollTop = 0;
-    } else {
+    const isOverflowAuto = getComputedStyle(el).overflow === 'auto' || getComputedStyle(el).overflowY === 'auto';
+    if (isOverflowAuto) {
       el.scrollTop = 0;
+    } else {
+      const viewport = el.querySelector<HTMLElement>("[data-radix-scroll-area-viewport]");
+      if (viewport) {
+        viewport.scrollTop = 0;
+      }
     }
   }, [selectedPostId]);
 
@@ -288,9 +280,9 @@ const CoursePage = () => {
   return (
     <div className="flex flex-col h-full" suppressHydrationWarning>
       <PageHeader className="shrink-0">
-        <PageHeaderHeading>{courseData.course?.name}</PageHeaderHeading>
+        <PageHeaderHeading className="animate-fade-in-down">{courseData.course?.name}</PageHeaderHeading>
         {postCount > 0 && (
-          <p className="text-xs text-muted-foreground pl-4 ml-[3px] mt-2 font-mono">{postCount} 份考古題</p>
+          <p className="text-xs text-muted-foreground pl-4 ml-[3px] mt-2 font-mono animate-fade-in" style={{ animationDelay: "150ms" }}>{postCount} 份考古題</p>
         )}
       </PageHeader>
 
@@ -312,8 +304,6 @@ const CoursePage = () => {
                 departmentData={departmentData}
                 deptError={deptError}
                 isDeptLoading={isDeptLoading}
-                departmentId={departmentId}
-                courseId={courseId}
                 setParams={setParams}
               />
             </ScrollArea>
@@ -344,8 +334,6 @@ const CoursePage = () => {
               departmentData={departmentData}
               deptError={deptError}
               isDeptLoading={isDeptLoading}
-              departmentId={departmentId}
-              courseId={courseId}
               setParams={setParams}
             />
           </div>
